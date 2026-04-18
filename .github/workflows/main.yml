@@ -1,0 +1,22 @@
+name: Extract Xed-Editor
+
+on:
+  workflow_dispatch:
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Extract tar.gz file
+        run: tar -xzf Xed-Editor-3.2.7.tar.gz
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Extract Xed-Editor-3.2.7.tar.gz"
+          git push
