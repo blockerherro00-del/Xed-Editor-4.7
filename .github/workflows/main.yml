@@ -3,20 +3,33 @@ name: Extract Xed-Editor
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   extract:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Extract tar.gz file
-        run: unzip -q Xed-Editor-3.2.7.zip
-
-      - name: Commit and push
+      - name: Extract zip file
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Extract Xed-Editor-3.2.7.zip"
-          git push
+          unzip -q Xed-Editor-3.2.7.zip
+
+      - name: Commit and push (ignore workflows)
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+
+          # Add সব file কিন্তু .github/workflows ignore করবে
+          git add . ':!.github/workflows/*'
+
+          # Check যদি কোনো change থাকে
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Extract Xed-Editor-3.2.7.zip"
+            git push
+          fi
